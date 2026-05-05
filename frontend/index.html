@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overfit — AI Personal Trainer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+  <span class="logo">overfit</span>
+  <span class="tagline">AI Personal Trainer & Coach</span>
+</header>
+
+<main id="app">
+
+  <!-- ── View 1: Client List ───────────────────────────────────────────────── -->
+  <div id="client-list-view">
+    <div class="view-header">
+      <h2>Clients</h2>
+    </div>
+    <div id="client-cards" class="client-grid"></div>
+  </div>
+
+  <!-- ── View 2: Client Detail ─────────────────────────────────────────────── -->
+  <div id="client-detail-view" style="display:none">
+    <div class="view-header">
+      <button id="back-btn" class="btn btn-secondary">← Back</button>
+      <h2 id="client-name-heading"></h2>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="profile">Profile</button>
+      <button class="tab-btn" data-tab="meal-plan">Meal Plan</button>
+      <button class="tab-btn" data-tab="workout">Workout</button>
+      <button class="tab-btn" data-tab="log">Daily Log</button>
+      <button class="tab-btn" data-tab="report">Report</button>
+    </div>
+
+    <!-- Profile -->
+    <div id="tab-profile" class="tab-pane active">
+      <div class="card">
+        <div class="card-title">Client Profile</div>
+        <form id="profile-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" name="name" required placeholder="Alice Smith">
+            </div>
+            <div class="form-group">
+              <label>Age</label>
+              <input type="number" name="age" min="10" max="99" placeholder="28">
+            </div>
+            <div class="form-group">
+              <label>Sex</label>
+              <select name="sex">
+                <option value="">— select —</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Height (cm)</label>
+              <input type="number" name="height_cm" step="0.1" placeholder="170">
+            </div>
+            <div class="form-group">
+              <label>Weight (kg)</label>
+              <input type="number" name="weight_kg" step="0.1" placeholder="75.0">
+            </div>
+            <div class="form-group">
+              <label>Goal</label>
+              <select name="goal">
+                <option value="">— select —</option>
+                <option value="lose_weight">Lose Weight</option>
+                <option value="gain_muscle">Gain Muscle</option>
+                <option value="maintain">Maintain</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Activity Level</label>
+              <select name="activity_level">
+                <option value="">— select —</option>
+                <option value="sedentary">Sedentary (desk job, no exercise)</option>
+                <option value="lightly_active">Lightly Active (1–3x/week)</option>
+                <option value="moderately_active">Moderately Active (3–5x/week)</option>
+                <option value="very_active">Very Active (6–7x/week)</option>
+                <option value="extra_active">Extra Active (athlete / physical job)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Dietary Restrictions (comma-separated)</label>
+              <input type="text" name="dietary_restrictions" placeholder="e.g. lactose-free, no pork">
+            </div>
+            <div class="form-group full">
+              <label>Injuries / Limitations (comma-separated)</label>
+              <input type="text" name="injuries" placeholder="e.g. lower back pain, bad knees">
+            </div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-box">
+              <div class="stat-val" id="stat-bmr">—</div>
+              <div class="stat-lbl">BMR (kcal)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="stat-tdee">—</div>
+              <div class="stat-lbl">TDEE (kcal)</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="stat-target">—</div>
+              <div class="stat-lbl">Target (kcal)</div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn">Save Profile</button>
+            <button type="button" id="delete-client-btn" class="btn btn-danger">Delete Client</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Meal Plan -->
+    <div id="tab-meal-plan" class="tab-pane">
+      <div class="card">
+        <div class="card-title">Weekly Meal Plan</div>
+        <div id="meal-plan-content">
+          <div class="empty-state"><p>Loading…</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workout -->
+    <div id="tab-workout" class="tab-pane">
+      <div class="card">
+        <div class="card-title">Weekly Workout Plan</div>
+        <div id="workout-content">
+          <div class="empty-state"><p>Loading…</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Log -->
+    <div id="tab-log" class="tab-pane">
+      <!-- Rendered dynamically by JS -->
+    </div>
+
+    <!-- Report -->
+    <div id="tab-report" class="tab-pane">
+      <div class="card">
+        <div class="card-title">Progress Report</div>
+        <div id="report-content">
+          <div class="empty-state"><p>Loading…</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end client-detail-view -->
+</main>
+
+<!-- ── Create Client Modal ──────────────────────────────────────────────────── -->
+<div id="create-modal" style="display:none">
+  <div class="modal-backdrop"></div>
+  <div class="modal-box">
+    <h3>New Client</h3>
+    <form id="create-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" name="name" required placeholder="Alice Smith">
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age" min="10" max="99" placeholder="28">
+        </div>
+        <div class="form-group">
+          <label>Sex</label>
+          <select name="sex">
+            <option value="">— select —</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" name="height_cm" step="0.1" placeholder="170">
+        </div>
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" name="weight_kg" step="0.1" placeholder="75.0">
+        </div>
+        <div class="form-group">
+          <label>Goal</label>
+          <select name="goal">
+            <option value="">— select —</option>
+            <option value="lose_weight">Lose Weight</option>
+            <option value="gain_muscle">Gain Muscle</option>
+            <option value="maintain">Maintain</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Activity Level</label>
+          <select name="activity_level">
+            <option value="">— select —</option>
+            <option value="sedentary">Sedentary</option>
+            <option value="lightly_active">Lightly Active</option>
+            <option value="moderately_active">Moderately Active</option>
+            <option value="very_active">Very Active</option>
+            <option value="extra_active">Extra Active</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Dietary Restrictions</label>
+          <input type="text" name="dietary_restrictions" placeholder="e.g. vegan, gluten-free">
+        </div>
+        <div class="form-group full">
+          <label>Injuries / Limitations</label>
+          <input type="text" name="injuries" placeholder="e.g. bad knees, shoulder injury">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn">Create Client</button>
+        <button type="button" id="cancel-create" class="btn btn-secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Toast Container ──────────────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

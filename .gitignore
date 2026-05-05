@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+
+# Claude Code — skills are project config, but trainer data should not be committed
+.claude/trainer/
+
+# OS
+.DS_Store
